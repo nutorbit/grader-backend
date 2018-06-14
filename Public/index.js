@@ -1,8 +1,8 @@
 document.getElementById('form').onsubmit = () => {
-    submit();
+    submitForm();
 }
 
-function submit(){
+function submitForm(){
     var username = document.getElementsByName('username')[0].value;
     var password = document.getElementsByName('password')[0].value;
     var email = document.getElementsByName('email')[0].value;
@@ -13,7 +13,16 @@ function submit(){
     }
     console.log(json);
     // send user
-    var res = axios.post('/add_users', json);
+    axios.post('/add_users', json).then( (res) => {
+        console.log('Success to adding user');
+    }).catch( (err) => {
+        console.log('Something was wrong');
+    });
+    
     console.log(res);
     // console.log(username);   
+}
+
+function submitProblem(){
+
 }

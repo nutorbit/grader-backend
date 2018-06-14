@@ -13,8 +13,20 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var path = require("path");
+var axios = require('axios');
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'Public')));
+
+
+var hackerEarth = require('hackerearth-node'); //require the Library
+var hackerEarth = new hackerEarth('1c3a3ae566b1185bcb79aaeadb7e919c9537b4c9');
+var config = {
+    time_limit: 1,
+    memory_limit: 323244,
+    language: "C++"
+};
+config.source='#include<bits/stdc++.h> \n int main(){std::cout << 5;}';  //your source code for which you want to use hackerEarth api
+config.input="5";  //input against which you have to test your source code
 
 // Default page
 app.get('/', (req, res) => {
@@ -29,7 +41,27 @@ app.listen(3000, () => {
 // Add users
 app.post('/add_users', (req, res) => {
     db.ref().child('users').push(req.body);
-    console.log('Success for adding users');
+    // console.log('Success for adding user');
     res.send(200);
     // res.send(JSON.stringify({test: 1}));
+});
+
+app.post('/add_problem', (req, res) => {
+    // db.ref().child('problems').push(req.body);
+    // console.log('Success for adding problem');
+    res.send(200);
+});
+
+
+app.get('/judge', (req, res) => {
+    source = req.body.source;
+    axios.post('https://ngrader.herokuapp.com/api/submit/custom', {
+        lang: "15",
+        input: "5",
+        sourcecode: source
+    }).then( (res) => {
+        console.log(res.data);
+    }).catch( (err) => {
+        console.log(err);
+    });
 });
