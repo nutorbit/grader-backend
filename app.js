@@ -30,17 +30,43 @@ app.listen(3333, () => {
 });
 
 // Add users
-app.post('/add_users', (req, res) => {
-    db.ref().child('users').push(req.body);
+app.get('/add_users', (req, res) => {
+    console.log('add_users');
+    var ref = db.ref().child('users');
+    ref.push(req.body);
+    res.sendStatus(200);
     // console.log('Success for adding user');
-    res.send(200);
-    // res.send(JSON.stringify({test: 1}));
+    
+});
+
+app.post('/check_users', (req, res) => {
+    console.log('check_users');
+    
+    var A = [];
+    var ref = db.ref().child('users');
+    ref.on('value', (snapshot) => {
+        // console.log(snapshot.val());
+        var data = snapshot.val();
+        for(var key in data){
+            var usr = data[key].username;
+            var ps = data[key].password;
+            if(req.body.username == usr && req.body.password == ps){
+                res.status(200).send('found');
+                return ;
+            }
+        }
+        res.status(200).send('not found');
+        return ;
+    });
+    
+    
+    
 });
 
 app.post('/add_problem', (req, res) => {
     // db.ref().child('problems').push(req.body);
     // console.log('Success for adding problem');
-    res.send(200);
+    res.sendStatus(200);
 });
 
 
