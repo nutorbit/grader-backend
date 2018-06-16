@@ -14,19 +14,10 @@ var app = express();
 var bodyParser = require('body-parser');
 var path = require("path");
 var axios = require('axios');
+var cors = require('cors');
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'Public')));
-
-
-var hackerEarth = require('hackerearth-node'); //require the Library
-var hackerEarth = new hackerEarth('1c3a3ae566b1185bcb79aaeadb7e919c9537b4c9');
-var config = {
-    time_limit: 1,
-    memory_limit: 323244,
-    language: "C++"
-};
-config.source='#include<bits/stdc++.h> \n int main(){std::cout << 5;}';  //your source code for which you want to use hackerEarth api
-config.input="5";  //input against which you have to test your source code
 
 // Default page
 app.get('/', (req, res) => {
@@ -34,8 +25,8 @@ app.get('/', (req, res) => {
 });
 
 // Create localhost
-app.listen(3000, () => {
-    console.log('Run on port 3000!');
+app.listen(3333, () => {
+    console.log('Run on port 3333!');
 });
 
 // Add users

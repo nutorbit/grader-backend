@@ -1,8 +1,11 @@
-document.getElementById('form').onsubmit = () => {
-    submitForm();
+document.getElementById('Register').onsubmit = () => {
+    submitRegister();
+}
+document.getElementById('Upload_code').onsubmit = () => {
+    submitUploadCode();
 }
 
-function submitForm(){
+function submitRegister(){
     var username = document.getElementsByName('username')[0].value;
     var password = document.getElementsByName('password')[0].value;
     var email = document.getElementsByName('email')[0].value;
