@@ -30,11 +30,19 @@ app.listen(3333, () => {
 });
 
 // Add users
-app.get('/add_users', (req, res) => {
+app.post('/add_users', (req, res) => {
     console.log('add_users');
     var ref = db.ref().child('users');
-    ref.push(req.body);
+    // console.log(req.body);
+    ref.push(req.body).then( (ms) => {
+        console.log(ms);
+        res.sendStatus(200);
+    } ).catch( (ms) => {
+        console.log(ms);
+        // res.sendStatus(404);
+    });
     res.sendStatus(200);
+    
     // console.log('Success for adding user');
     
 });
@@ -47,6 +55,7 @@ app.post('/check_users', (req, res) => {
     ref.on('value', (snapshot) => {
         // console.log(snapshot.val());
         var data = snapshot.val();
+        
         for(var key in data){
             var usr = data[key].username;
             var ps = data[key].password;
