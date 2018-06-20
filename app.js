@@ -1,12 +1,9 @@
-// Setup firebase
-var firebase = require('firebase-admin');
-var serviceAccount = require('./certificate.json');
-firebase.initializeApp({
-    credential: firebase.credential.cert(serviceAccount),
-    databaseURL: "https://grader-ce.firebaseio.com"
-});
+// Setup database
+var mongoose = require('mongoose');
 
-db = firebase.app().database();
+mongoose.connect('mongodb://localhost/db');
+
+var User = require('./model/user.js');
 
 // Setup backend
 var express = require('express');
@@ -32,43 +29,46 @@ app.listen(3333, () => {
 // Add users
 app.post('/add_users', (req, res) => {
     console.log('add_users');
-    var ref = db.ref().child('users');
-    // console.log(req.body);
-    ref.push(req.body).then( (ms) => {
-        console.log(ms);
-        res.sendStatus(200);
-    } ).catch( (ms) => {
-        console.log(ms);
-        // res.sendStatus(404);
-    });
-    res.sendStatus(200);
-    
-    // console.log('Success for adding user');
-    
+    const userData = {
+        username: req.body.username,
+        password: req.body.password,
+        email: req.body.email,
+        permission: 1
+    };
+    User.find({
+        username: req.body.username
+    }, (err, data) => {
+        if(data.length == 0){
+            User.create(userData, (err, data) => {
+                if(err){
+                    console.log(err);
+                    res.status(401).send('not passed');
+                }else{
+                    console.log('P');
+                    res.status(200).send('passed');
+                }
+            })
+        }else{
+            res.status(401).send('not passed');
+        }
+    })
 });
 
 app.post('/check_users', (req, res) => {
     console.log('check_users');
-    
-    var A = [];
-    var ref = db.ref().child('users');
-    ref.on('value', (snapshot) => {
-        // console.log(snapshot.val());
-        var data = snapshot.val();
-        
-        for(var key in data){
-            var usr = data[key].username;
-            var ps = data[key].password;
-            if(req.body.username == usr && req.body.password == ps){
-                res.status(200).send('found');
-                return ;
-            }
+    User.find({
+        username: req.body.username,
+        password: req.body.password
+    }, (err, data) => {
+        if(err){
+            res.status(401).send(err);
         }
-        res.status(200).send('not found');
-        return ;
-    });
-    
-    
+        if(data.length != 0){
+            res.status(200).send('found');
+        }else{
+            res.status(401).send('not found');
+        }
+    })
     
 });
 

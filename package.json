@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,8 @@
     "express": "^4.16.3",
     "firebase": "^5.0.4",
     "firebase-admin": "^5.12.1",
-    "hackerearth-node": "^2.3.9"
+    "hackerearth-node": "^2.3.9",
+    "mongoose": "^5.1.6",
+    "nodemon": "^1.17.5"
   }
 }
