@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/db');
 
 var User = require('./model/user.js');
+var Problem = require('./model/problem.js');
 
 // Setup backend
 var express = require('express');
@@ -71,13 +72,36 @@ app.post('/check_users', (req, res) => {
     
 });
 
-app.post('/add_problem', (req, res) => {
-    // db.ref().child('problems').push(req.body);
-    // console.log('Success for adding problem');
-    res.sendStatus(200);
+// Get user's information from db using username as params to display on dashboard.
+app.get('/get_user', (req, res) => {
+    console.log('get_users');
+
 });
 
+// Add problems to db.
+app.post('/add_problem', (req, res) => {
+    console.log('add_problem');
+    const newProblem = new Problem({
+        name: req.body.name,
+        difficulty: req.body.difficulty,
+        description: req.body.description,
+        reqInput: req.body.reqInput,
+        reqOutput: req.body.reqOutput,
+        testCase: req.body.testCase
+    });
+    newProblem.save((err, data) => {
+        if(err) {
+            res.status(401).send('not passed');
+        }
+        res.status(200).send('passed');
+        console.log(data);
+    })    
+});
 
+// Get problems's details from db using id as params.
+app.get('/get_problem', (req, res) => {
+
+})
 app.get('/judge', (req, res) => {
     source = req.body.source;
     axios.post('https://ngrader.herokuapp.com/api/submit/custom', {

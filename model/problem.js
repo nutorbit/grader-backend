@@ -1,9 +1,6 @@
 var mongoose = require("mongoose");
 
 const problemSchema = new mongoose.Schema({
-    id: {
-        type: Number
-    },
     name: {
         type: String
     },
@@ -11,6 +8,12 @@ const problemSchema = new mongoose.Schema({
         type: String
     },
     description: {
+        type: String
+    },
+    reqInput: {
+        type: String
+    },
+    reqOutput: {
         type: String
     },
     testCase: [
@@ -23,6 +26,7 @@ const problemSchema = new mongoose.Schema({
             }
         }
     ]
-
-    
 })
+
+const Problem = mongoose.model('Problem', problemSchema);
+module.exports = Problem;
