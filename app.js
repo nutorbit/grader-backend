@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/db');
 
 var User = require('./model/user.js');
+var Problem = require('./model/problem.js');
 
 // Setup backend
 var express = require('express');
@@ -72,14 +73,44 @@ app.post('/check_users', (req, res) => {
 });
 
 app.post('/add_problem', (req, res) => {
-    // db.ref().child('problems').push(req.body);
-    // console.log('Success for adding problem');
+    console.log(req.body);
+    /*
+
+    !!!--- Format like this ---!!!
+    {
+        "id": "1",
+        "name": "add",
+        "difficulty": "hard",
+        "description": "test",
+        "testCase": [
+            {
+                "input": "1, 2",
+                "output": "3"
+            },
+            {
+                "input": "3, 2",
+                "output": "5"
+            }
+        ]
+    }
+    
+    # ลองเอาทั้งก้อนนี้ไปใส่ post man มาที่ http://127.0.0.1:3333/add_problem
+
+    */
+    const data = req.body;
+    Problem.create(data, (err, data) => {
+        console.log('Passed');
+        
+    })
+    console.log('Success for adding problem');
     res.sendStatus(200);
 });
 
 
 app.get('/judge', (req, res) => {
+    console.log('Judging');
     source = req.body.source;
+    console.log(source);
     axios.post('https://ngrader.herokuapp.com/api/submit/custom', {
         lang: "15",
         input: "5",
