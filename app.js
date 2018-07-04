@@ -54,6 +54,23 @@ app.post('/add_users', (req, res) => {
     })
 });
 
+// Get user's data query by username. [HAVEN'T SENT AS JSON TO BODY YET.]
+app.get('/get_user/:username', (req, res) => {
+    console.log('Find user : ', req.params.username);
+    User.find({
+        username: req.params.username
+    }, (err, data) => {
+        if(err) {
+            console.log(err);
+        } else if(data.length != 0) {
+            console.log(JSON.stringify(data, undefined, 2));
+            res.sendStatus(200);
+        } else {
+            res.send('Cant find it, duh');
+        }
+    });
+});
+
 app.post('/check_users', (req, res) => {
     console.log('check_users');
     User.find({
@@ -73,39 +90,53 @@ app.post('/check_users', (req, res) => {
 });
 
 app.post('/add_problem', (req, res) => {
-    console.log(req.body);
-    /*
-
-    !!!--- Format like this ---!!!
-    {
-        "id": "1",
-        "name": "add",
-        "difficulty": "hard",
-        "description": "test",
-        "testCase": [
-            {
-                "input": "1, 2",
-                "output": "3"
-            },
-            {
-                "input": "3, 2",
-                "output": "5"
-            }
-        ]
-    }
-    
-    # ลองเอาทั้งก้อนนี้ไปใส่ post man มาที่ http://127.0.0.1:3333/add_problem
-
-    */
-    const data = req.body;
-    Problem.create(data, (err, data) => {
-        console.log('Passed');
-        
+    console.log('add_problem')
+    console.log(JSON.stringify(req.body, undefined, 2));
+   // ตอน add ข้อมูลซ้ำแล้วแม่งบึ้มเฉย wtf
+    const problemData = {
+        id: req.body.id,
+        name: req.body.name,
+        difficulty: req.body.difficulty,
+        description: req.body.description,
+        reqInput: req.body.reqInput,
+        reqOutput: req.body.reqOutput,
+        testCase: req.body.testCase
+    };
+    Problem.find({
+        name: req.body.name
+    }, (err, data) => {
+        if(data.length == 0) {data
+            Problem.create(problemData, (err, problemData) => {
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log('Success!');
+                    res.status(200).send('Problem is successfully added');
+                }
+            })
+        } else {
+            res.sendStatus(401).send('Failed');
+        }
     })
-    console.log('Success for adding problem');
-    res.sendStatus(200);
 });
 
+// Get user's data query by username. [HAVEN'T SENT AS JSON TO BODY YET.]
+app.get('/get_problem/:id', (req, res) => {
+    console.log('Find problem id :', req.params.id);
+    Problem.find({
+        id: req.params.id
+    }, (err, data) => {
+        if(err) {
+            console.log(err);
+        } else if(data.length != 0) {
+            console.log(JSON.stringify(data, undefined, 2));
+            res.sendStatus(200);
+        } else {
+            res.send('Cant find it, duh');
+        }
+
+    })
+});
 
 app.get('/judge', (req, res) => {
     console.log('Judging');
