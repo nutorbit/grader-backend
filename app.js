@@ -1,4 +1,4 @@
-// Setup database
+// Setup database and models.
 var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/db');
@@ -6,7 +6,7 @@ mongoose.connect('mongodb://localhost/db');
 var User = require('./model/user.js');
 var Problem = require('./model/problem.js');
 
-// Setup backend
+// Setup backend.
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
 app.listen(3333, () => {
     console.log('Run on port 3333!');
 });
+
 
 // Add users
 app.post('/add_users', (req, res) => {
@@ -45,7 +46,7 @@ app.post('/add_users', (req, res) => {
                     res.status(401).send('not passed');
                 }else{
                     console.log('P');
-                    res.status(200).send('passed');
+                    res.status(201).send('New user is added.');
                 }
             })
         }else{
@@ -63,10 +64,10 @@ app.get('/get_user/:username', (req, res) => {
         if(err) {
             console.log(err);
         } else if(data.length != 0) {
-            console.log(JSON.stringify(data, undefined, 2));
-            res.sendStatus(200);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(data));
         } else {
-            res.send('Cant find it, duh');
+            res.sendStatus(401).send('Unauthenticated visitor.');
         }
     });
 });
@@ -101,7 +102,7 @@ app.post('/add_problem', (req, res) => {
         reqInput: req.body.reqInput,
         reqOutput: req.body.reqOutput,
         testCase: req.body.testCase
-    };
+    };            console.log(JSON.stringify(data, undefined, 2));
     Problem.find({
         name: req.body.name
     }, (err, data) => {
@@ -111,9 +112,11 @@ app.post('/add_problem', (req, res) => {
                     console.log(err);
                 } else {
                     console.log('Success!');
-                    res.status(200).send('Problem is successfully added');
+                    res.status(201).send('Problem is successfully added');
                 }
-            })
+            });
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(data));
         } else {
             res.sendStatus(401).send('Failed');
         }
@@ -129,12 +132,31 @@ app.get('/get_problem/:id', (req, res) => {
         if(err) {
             console.log(err);
         } else if(data.length != 0) {
-            console.log(JSON.stringify(data, undefined, 2));
-            res.sendStatus(200);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(data));
         } else {
             res.send('Cant find it, duh');
         }
 
+    })
+});
+
+// List all problems to problem list page.
+app.get('/list_problem', (req, res) => {
+    console.log('Sending problem list');
+    Problem.find({},{ 
+            id: true, 
+            name: true, 
+            difficulty: true, 
+            passedCount: true 
+        }, (err, problems) => {
+            if(err) {
+                console.log(err);
+                res.sendStatus(400).send('Listing problem error.');
+            } else {
+                res.setHeader('Content-Type','application/json');
+                res.send(JSON.stringify({problems: problems}));
+            }
     })
 });
 
