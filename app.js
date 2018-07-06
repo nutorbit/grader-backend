@@ -27,6 +27,16 @@ app.listen(3333, () => {
     console.log('Run on port 3333!');
 });
 
+// Config for select infromation to send.
+var submitInfoSelect = {
+    submitId: true,
+    submitTime: true,
+    sender: true,
+    submitProblem: true,
+    result: true,
+    processTime: true,
+    processMemory: true
+};
 
 // Add users
 app.post('/add_users', (req, res) => {
@@ -88,7 +98,7 @@ app.post('/check_users', (req, res) => {
             res.status(401).send('not found');
         }
     })
-    
+    add_submitlog
 });
 
 app.post('/add_problem', (req, res) => {
@@ -161,37 +171,28 @@ app.get('/list_problem', (req, res) => {
 // Add submit log.
 app.post('/add_submitlog', (req, res) => {
     console.log('add_submitlog');
-    const logData = req.body;
-    // const logData = {
-    //     sender: req.body.sender,
-    //     submitProblem: req.body.submitProblem,
-    //     result: req.body.result,
-    //     processTime: req.body.processTime,
-    //     processMemory: req.body.processMemory
-    // };
-            SubmitLog.create(logData, (err, logData) => {
-                if(err){
-                    console.log(err);
-                    res.status(401).send('not passed');
-                }else{
-                    console.log('P');
-                    res.status(201).send('New log is added.');
-                }
-            });
+    const logData = {
+        sender: req.body.sender,
+        submitProblem: req.body.submitProblem,
+        result: req.body.result,
+        processTime: req.body.processTime,
+        processMemory: req.body.processMemory
+    };
+    SubmitLog.create(logData, (err, logData) => {
+        if(err){add_submitlog
+                console.log(err);
+                res.status(401).send('not passed');
+            }else{
+                console.log('P');
+                res.status(201).send('New log is added.');
+            }
+    });
 })
 
 // Simple listing log. (did not screen sender.)
 app.get('/list_submitlog', (req, res) => {
     console.log('Sending submitlog list');
-    SubmitLog.find({},{
-        submitId: true,
-        submitTime: true,
-        sender: true,
-        submitProblem: true,
-        result: true,
-        processTime: true,
-        processMemory: true
-    }, (err, logData) => {
+    SubmitLog.find({}, submitInfoSelect, (err, logData) => {
         if(err) {
             console.log(err);
             res.sendStatus(400).send('Listing log error.');
@@ -201,6 +202,36 @@ app.get('/list_submitlog', (req, res) => {
         }
     })
 })
+
+app.get('/list_user_submit/:username', (req, res) => {
+    console.log('Get user\'s log : ', req.params.username);
+    SubmitLog.find({
+        sender: req.params.username
+    }, submitInfoSelect , (err, logData) => {
+        if(err) {
+            console.log(err);
+            res.sendStatus(400).send('Listing log error.');
+        } else {
+            res.setHeader('Content-Type','application/json');
+            res.send(JSON.stringify({logData: logData}));
+        }
+    });
+});
+
+app.get('/list_problem_submit/:id', (req, res) => {
+    console.log('Get problem\'s log id : ', req.params.id);
+    SubmitLog.find({
+        submitProblem: req.params.id
+    }, submitInfoSelect , (err, logData) => {
+        if(err) {
+            console.log(err);
+            res.sendStatus(400).send('Listing log error.');
+        } else {
+            res.setHeader('Content-Type','application/json');
+            res.send(JSON.stringify({logData: logData}));
+        }
+    });
+});
 
 app.get('/judge', (req, res) => {
     console.log('Judging');
