@@ -1,7 +1,11 @@
 var mongoose = require("mongoose");
+var autoIncrement = require('mongoose-auto-increment');
+ 
+var connection = mongoose.createConnection("mongodb://localhost/db");
+autoIncrement.initialize(connection);
 
 const problemSchema = new mongoose.Schema({
-    id: {
+    problemId: {
         type: Number
     },
     name: {
@@ -25,10 +29,12 @@ const problemSchema = new mongoose.Schema({
                 type: String
             }
         }
-    ]
-
-    
+    ]   
 });
 
+problemSchema.plugin(autoIncrement.plugin, { 
+    model: 'Problem',
+    field: 'problemId',
+});
 const Problem = mongoose.model('Problem', problemSchema);
 module.exports = Problem;

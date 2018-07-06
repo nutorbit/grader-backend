@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app"
-
   },
   "keywords": [],
   "author": "",
@@ -21,6 +20,7 @@
     "firebase-admin": "^5.12.1",
     "hackerearth-node": "^2.3.9",
     "mongoose": "^5.1.6",
+    "mongoose-auto-increment": "^5.0.1",
     "nodemon": "^1.17.5"
   }
 }

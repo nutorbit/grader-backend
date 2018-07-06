@@ -1,7 +1,12 @@
 var mongoose = require("mongoose");
 
+var autoIncrement = require('mongoose-auto-increment');
+ 
+var connection = mongoose.createConnection("mongodb://localhost/db");
+autoIncrement.initialize(connection);
+
 const submitSchema = new mongoose.Schema({
-    id: {
+    submitId: {
         type: Number
     },
     submitTime: {
@@ -25,5 +30,9 @@ const submitSchema = new mongoose.Schema({
     }
 });
 
+submitSchema.plugin(autoIncrement.plugin, {
+    model: 'Submit',
+    field: 'submitId'
+});
 const SubmitLog = mongoose.model('Submit', submitSchema);
 module.exports = SubmitLog;

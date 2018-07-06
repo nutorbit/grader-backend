@@ -96,7 +96,6 @@ app.post('/add_problem', (req, res) => {
     console.log(JSON.stringify(req.body, undefined, 2));
    // ตอน add ข้อมูลซ้ำแล้วแม่งบึ้มเฉย wtf
     const problemData = {
-        id: req.body.id,
         name: req.body.name,
         difficulty: req.body.difficulty,
         description: req.body.description,
@@ -126,7 +125,7 @@ app.post('/add_problem', (req, res) => {
 app.get('/get_problem/:id', (req, res) => {
     console.log('Find problem id :', req.params.id);
     Problem.find({
-        id: req.params.id
+        problemId: req.params.id
     }, (err, data) => {
         if(err) {
             console.log(err);
@@ -144,7 +143,7 @@ app.get('/get_problem/:id', (req, res) => {
 app.get('/list_problem', (req, res) => {
     console.log('Sending problem list');
     Problem.find({},{ 
-            id: true, 
+            problemId: true, 
             name: true, 
             difficulty: true, 
             passedCount: true 
@@ -162,19 +161,15 @@ app.get('/list_problem', (req, res) => {
 // Add submit log.
 app.post('/add_submitlog', (req, res) => {
     console.log('add_submitlog');
-    const logData = {
-        id: req.body.id,
-        sender: req.body.sender,
-        submitProblem: req.body.submitProblem,
-        result: req.body.result,
-        processTime: req.body.processTime,
-        processMemory: req.body.processMemory
-    };
-    SubmitLog.find({
-        id: req.body.id
-    }, (err, data) => {
-        if(data.length == 0){
-            SubmitLog.create(logData, (err, data) => {
+    const logData = req.body;
+    // const logData = {
+    //     sender: req.body.sender,
+    //     submitProblem: req.body.submitProblem,
+    //     result: req.body.result,
+    //     processTime: req.body.processTime,
+    //     processMemory: req.body.processMemory
+    // };
+            SubmitLog.create(logData, (err, logData) => {
                 if(err){
                     console.log(err);
                     res.status(401).send('not passed');
@@ -182,17 +177,21 @@ app.post('/add_submitlog', (req, res) => {
                     console.log('P');
                     res.status(201).send('New log is added.');
                 }
-            })
-        }else{
-            res.status(401).send('not passed');
-        }
-    })
+            });
 })
 
 // Simple listing log. (did not screen sender.)
 app.get('/list_submitlog', (req, res) => {
     console.log('Sending submitlog list');
-    SubmitLog.find({}, (err, logData) => {
+    SubmitLog.find({},{
+        submitId: true,
+        submitTime: true,
+        sender: true,
+        submitProblem: true,
+        result: true,
+        processTime: true,
+        processMemory: true
+    }, (err, logData) => {
         if(err) {
             console.log(err);
             res.sendStatus(400).send('Listing log error.');
