@@ -107,7 +107,7 @@ app.post('/add_problem', (req, res) => {
     Problem.find({
         name: req.body.name
     }, (err, data) => {
-        if(data.length == 0) {data
+        if(data.length == 0) {
             Problem.create(problemData, (err, problemData) => {
                 if(err) {
                     console.log(err);
@@ -116,8 +116,6 @@ app.post('/add_problem', (req, res) => {
                     res.status(201).send('Problem is successfully added');
                 }
             });
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(data));
         } else {
             res.sendStatus(401).send('Failed');
         }
@@ -161,9 +159,9 @@ app.get('/list_problem', (req, res) => {
     });
 });
 
+// Add submit log.
 app.post('/add_submitlog', (req, res) => {
     console.log('add_submitlog');
-    console.log(JSON.stringify(req.body, undefined, 2));
     const logData = {
         id: req.body.id,
         sender: req.body.sender,
@@ -172,12 +170,39 @@ app.post('/add_submitlog', (req, res) => {
         processTime: req.body.processTime,
         processMemory: req.body.processMemory
     };
-
+    SubmitLog.find({
+        id: req.body.id
+    }, (err, data) => {
+        if(data.length == 0){
+            SubmitLog.create(logData, (err, data) => {
+                if(err){
+                    console.log(err);
+                    res.status(401).send('not passed');
+                }else{
+                    console.log('P');
+                    res.status(201).send('New log is added.');
+                }
+            })
+        }else{
+            res.status(401).send('not passed');
+        }
+    })
 })
 
+// Simple listing log. (did not screen sender.)
 app.get('/list_submitlog', (req, res) => {
     console.log('Sending submitlog list');
+    SubmitLog.find({}, (err, logData) => {
+        if(err) {
+            console.log(err);
+            res.sendStatus(400).send('Listing log error.');
+        } else {
+            res.setHeader('Content-Type','application/json');
+            res.send(JSON.stringify({logData: logData}));
+        }
+    })
 })
+
 app.get('/judge', (req, res) => {
     console.log('Judging');
     source = req.body.source;
