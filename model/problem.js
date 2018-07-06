@@ -13,6 +13,9 @@ const problemSchema = new mongoose.Schema({
     description: {
         type: String
     },
+    passedCount: {
+        type: Number
+    },
     testCase: [
         {
             input: {

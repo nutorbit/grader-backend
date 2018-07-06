@@ -5,6 +5,7 @@ mongoose.connect('mongodb://localhost/db');
 
 var User = require('./model/user.js');
 var Problem = require('./model/problem.js');
+var SubmitLog = require('./model/submitLog.js');
 
 // Setup backend.
 var express = require('express');
@@ -55,7 +56,7 @@ app.post('/add_users', (req, res) => {
     })
 });
 
-// Get user's data query by username. [HAVEN'T SENT AS JSON TO BODY YET.]
+// Get user's data query by username.
 app.get('/get_user/:username', (req, res) => {
     console.log('Find user : ', req.params.username);
     User.find({
@@ -102,7 +103,7 @@ app.post('/add_problem', (req, res) => {
         reqInput: req.body.reqInput,
         reqOutput: req.body.reqOutput,
         testCase: req.body.testCase
-    };            console.log(JSON.stringify(data, undefined, 2));
+    };           
     Problem.find({
         name: req.body.name
     }, (err, data) => {
@@ -123,7 +124,7 @@ app.post('/add_problem', (req, res) => {
     })
 });
 
-// Get user's data query by username. [HAVEN'T SENT AS JSON TO BODY YET.]
+// Get user's data query by username. 
 app.get('/get_problem/:id', (req, res) => {
     console.log('Find problem id :', req.params.id);
     Problem.find({
@@ -157,9 +158,26 @@ app.get('/list_problem', (req, res) => {
                 res.setHeader('Content-Type','application/json');
                 res.send(JSON.stringify({problems: problems}));
             }
-    })
+    });
 });
 
+app.post('/add_submitlog', (req, res) => {
+    console.log('add_submitlog');
+    console.log(JSON.stringify(req.body, undefined, 2));
+    const logData = {
+        id: req.body.id,
+        sender: req.body.sender,
+        submitProblem: req.body.submitProblem,
+        result: req.body.result,
+        processTime: req.body.processTime,
+        processMemory: req.body.processMemory
+    };
+
+})
+
+app.get('/list_submitlog', (req, res) => {
+    console.log('Sending submitlog list');
+})
 app.get('/judge', (req, res) => {
     console.log('Judging');
     source = req.body.source;
