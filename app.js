@@ -19,7 +19,13 @@ app.use(bodyParser.json());
 
 // Default page
 app.get('/', (req, res) => {
-    res.render('./Public/index.html');
+    res.json([{
+        id: 1,
+        username: "samsepi0l"
+    }, {
+        id: 2,
+        username: "D0loresH4ze"
+    }]);
 });
 
 // Create localhost
@@ -109,6 +115,7 @@ app.post('/add_problem', (req, res) => {
         name: req.body.name,
         difficulty: req.body.difficulty,
         description: req.body.description,
+        passedCount: 0,
         reqInput: req.body.reqInput,
         reqOutput: req.body.reqOutput,
         testCase: req.body.testCase
