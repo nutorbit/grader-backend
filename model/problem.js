@@ -20,6 +20,12 @@ const problemSchema = new mongoose.Schema({
     passedCount: {
         type: Number
     },
+    reqInput: {
+        type: String
+    },
+    reqOutput: {
+        type: String
+    },
     testCase: [
         {
             input: {
