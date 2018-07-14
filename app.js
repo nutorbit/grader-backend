@@ -104,7 +104,6 @@ app.post('/check_users', (req, res) => {
             res.status(401).send('not found');
         }
     })
-    add_submitlog
 });
 
 app.post('/add_problem', (req, res) => {
@@ -243,16 +242,17 @@ app.get('/list_problem_submit/:id', (req, res) => {
 app.post('/judge', (req, res) => {
     console.log('Judging');
     source = req.body.source;
+    inputCase = req.body.input;
     decode = (new Buffer(source.slice(13), 'base64')).toString('utf8');
     console.log(decode);
     axios.post('https://ngrader.herokuapp.com/api/submit/custom', {
         lang: "4",
-        input: "5",
+        input: inputCase,
         sourcecode: source
     }).then( (ms) => {
         console.log('success!');
         console.log(ms.data);
-        res.status(201).send('ok');
+        res.status(201).send(JSON.stringify(ms.data));
     }).catch( (err) => {
         console.log('error');
         res.status(404).send('error');
