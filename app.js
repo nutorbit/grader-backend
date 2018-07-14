@@ -240,17 +240,21 @@ app.get('/list_problem_submit/:id', (req, res) => {
     });
 });
 
-app.get('/judge', (req, res) => {
+app.post('/judge', (req, res) => {
     console.log('Judging');
     source = req.body.source;
-    console.log(source);
+    decode = (new Buffer(source.slice(13), 'base64')).toString('utf8');
+    console.log(decode);
     axios.post('https://ngrader.herokuapp.com/api/submit/custom', {
-        lang: "15",
+        lang: "4",
         input: "5",
         sourcecode: source
-    }).then( (res) => {
-        console.log(res.data);
+    }).then( (ms) => {
+        console.log('success!');
+        console.log(ms.data);
+        res.status(201).send('ok');
     }).catch( (err) => {
-        console.log(err);
+        console.log('error');
+        res.status(404).send('error');
     });
 });
