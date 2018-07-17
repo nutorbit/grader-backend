@@ -72,6 +72,40 @@ app.post('/add_users', (req, res) => {
     })
 });
 
+app.get('/list_user', (req, res) => {
+    console.log('Sending user list');
+    User.find({},{
+        username: true, 
+        problemSolved: true
+    }, (err, users) => {
+        if(err) {
+            console.log(err);
+            res.sendStatus(400).send('Listing problem error.');
+        } else {
+            res.setHeader('Content-Type','application/json');
+            res.send(JSON.stringify({users: users}));
+        }
+});
+});
+
+app.get('/list_problem', (req, res) => {
+    console.log('Sending problem list');
+    Problem.find({},{ 
+            problemId: true, 
+            name: true, 
+            difficulty: true, 
+            passedCount: true 
+        }, (err, problems) => {
+            if(err) {
+                console.log(err);
+                res.sendStatus(400).send('Listing problem error.');
+            } else {
+                res.setHeader('Content-Type','application/json');
+                res.send(JSON.stringify({problems: problems}));
+            }
+    });
+});
+
 // Get user's data query by username.
 app.get('/get_user/:username', (req, res) => {
     console.log('Find user : ', req.params.username);

@@ -10,8 +10,8 @@ const submitSchema = new mongoose.Schema({
         type: Number
     },
     submitTime: {
-        type: Date,
-        default: Date.now
+        type: String,
+        default: (new Date()).toLocaleString()
     },
     sender: {
         type: String
