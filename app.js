@@ -85,7 +85,7 @@ app.get('/list_user', (req, res) => {
             res.setHeader('Content-Type','application/json');
             res.send(JSON.stringify({users: users}));
         }
-});
+    });
 });
 
 app.get('/list_problem', (req, res) => {
@@ -119,6 +119,40 @@ app.get('/get_user/:username', (req, res) => {
             res.send(JSON.stringify(data));
         } else {
             res.sendStatus(401).send('Unauthenticated visitor.');
+        }
+    });
+});
+
+app.get('/update_user/:username', (req, res) => {
+    console.log('Update user : ', req.params.username);
+    const problemSolve = req.body.problemSolved
+    console.log(problemSolve);
+    User.findOneAndUpdate({
+        username: req.params.username
+    }, {$set:{problemSolved : problemSolve}}, (err, data) => {
+        if(err) {
+            console.log(err);
+        } else if(data.length != 0) {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(data));
+        } else {
+            res.sendStatus(401).send('Unauthenticated visitor.');
+        }
+    });
+});
+
+app.get('/delete_user/:username', (req, res) => {
+    const query = req.params.username;
+    console.log('Delete user : ', query);
+    User.findOneAndRemove({username: query}, (err, user) => {
+        if(err) {
+            console.log(err);
+        } else if(user) {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(user));
+        } else {
+            res.setHeader('Content-Type', 'text/html');
+            res.sendStatus(404).send('not found');
         }
     });
 });
@@ -167,6 +201,48 @@ app.post('/add_problem', (req, res) => {
             });
         } else {
             res.sendStatus(401).send('Failed');
+        }
+    })
+});
+
+app.post('/update_problem/:id', (req, res) => {
+    console.log('Update problem : ', req.params.id);
+    const passedCount = req.body.passedCount
+    console.log(passedCount);
+    Problem.findOneAndUpdate({
+        problemId: req.params.id
+    }, {$set:{passedCount : passedCount}}, (err, data) => {
+        if(err) {
+            console.log(err);
+        } else if(data.length != 0) {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(data));
+        } else {
+            res.sendStatus(401).send('Unauthenticated visitor.');
+        }
+    });
+});
+
+app.post('/edit_problem/:id', (req, res) => {
+    const problemData = req.body;
+    console.log('Edit problem\'s info : ', req.params.id);
+    Problem.findOneAndUpdate({
+        problemId: req.params.id
+    }, {$set:{
+        name: problemData.name,
+        difficulty: problemData.difficulty,
+        description: problemData.description,
+        reqInput: problemData.reqInput,
+        reqOutput: problemData.reqOutput,
+        testCase: problemData.testCase
+    }}, (err, data) => {
+        if(err) {
+            console.log(err);
+        } else if(data.length != 0) {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(problemData, undefined, 2));
+        } else {
+            res.sendStatus(404).send('Not found');
         }
     })
 });
