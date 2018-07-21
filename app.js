@@ -123,7 +123,7 @@ app.get('/get_user/:username', (req, res) => {
     });
 });
 
-app.get('/update_user/:username', (req, res) => {
+app.post('/update_user/:username', (req, res) => {
     console.log('Update user : ', req.params.username);
     const problemSolve = req.body.problemSolved
     console.log(problemSolve);
