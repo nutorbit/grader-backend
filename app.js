@@ -94,7 +94,8 @@ app.get('/list_problem', (req, res) => {
             problemId: true, 
             name: true, 
             difficulty: true, 
-            passedCount: true 
+            passedCount: true,
+            testCase : true
         }, (err, problems) => {
             if(err) {
                 console.log(err);
@@ -265,25 +266,6 @@ app.get('/get_problem/:id', (req, res) => {
     })
 });
 
-// List all problems to problem list page.
-app.get('/list_problem', (req, res) => {
-    console.log('Sending problem list');
-    Problem.find({},{ 
-            problemId: true, 
-            name: true, 
-            difficulty: true, 
-            passedCount: true 
-        }, (err, problems) => {
-            if(err) {
-                console.log(err);
-                res.sendStatus(400).send('Listing problem error.');
-            } else {
-                res.setHeader('Content-Type','application/json');
-                res.send(JSON.stringify({problems: problems}));
-            }
-    });
-});
-
 // Add submit log.
 app.post('/add_submitlog', (req, res) => {
     console.log('add_submitlog');
@@ -356,7 +338,7 @@ app.post('/judge', (req, res) => {
     decode = (new Buffer(source.slice(13), 'base64')).toString('utf8');
     console.log(decode);
     axios.post('https://ngrader.herokuapp.com/api/submit/custom', {
-        lang: "4",
+        lang: "10",
         input: inputCase,
         sourcecode: source
     }).then( (ms) => {
